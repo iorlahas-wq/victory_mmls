@@ -411,26 +411,23 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- ASSESSMENTS -->
 
-                <div class="admin-action-card admin-action-disabled">
-
-                    <span class="admin-action-number">
-                        05
-                    </span>
-
+                <a
+                    href="<?= e(url('app/assessment/index.php')) ?>"
+                    class="admin-action-card"
+                >
                     <h3>
                         Assessments
                     </h3>
 
                     <p>
-                        Manage lesson questions and assessment
-                        results.
+                        Manage lesson questions, answer options,
+                        marks and assessment questions across all lessons.
                     </p>
 
-                    <span class="admin-action-status">
-                        Coming next
+                    <span class="admin-action-link">
+                        Manage Assessments &rarr;
                     </span>
-
-                </div>
+                </a>
 
 
             </div>

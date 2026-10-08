@@ -1,15 +1,32 @@
 <?php
+
 declare(strict_types=1);
 
 /**
  * ============================================================
  * COMMON APPLICATION HEADER
  * ============================================================
+ *
+ * Shared navigation for:
+ * - Public visitors
+ * - Administrators
+ * - Instructors
+ * - Learners
+ *
+ * Assessment management is shared between Admin and Instructor
+ * through:
+ *
+ *     app/assessment/index.php
+ *
+ * Learners will later use:
+ *
+ *     app/learner/assessments/index.php
+ *
+ * to take assessments.
  */
 
-$pageTitle  = $pageTitle ?? APP_NAME;
+$pageTitle = $pageTitle ?? APP_NAME;
 $showNavbar = $showNavbar ?? true;
-
 
 /*
  * Load authentication helpers so the header can determine
@@ -51,13 +68,11 @@ $user = current_user();
 
 <body>
 
-
 <?php if ($showNavbar): ?>
 
 <nav class="main-navbar">
 
     <div class="container navbar-inner">
-
 
         <!-- ==================================================
              BRAND
@@ -171,10 +186,138 @@ $user = current_user();
                 </a>
 
                 <a
+                    href="<?= e(url('app/assessment/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Assessments
+                </a>
+
+                <a
                     href="<?= e(url('app/admin/users/index.php')) ?>"
                     class="nav-link"
                 >
                     Users
+                </a>
+
+                <span class="nav-user">
+                    <?= e($user['full_name']) ?>
+                </span>
+
+                <form
+                    method="post"
+                    action="<?= e(url('logout.php')) ?>"
+                    class="logout-form"
+                >
+
+                    <?= csrf_field() ?>
+
+                    <button
+                        type="submit"
+                        class="nav-logout"
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        <!-- ==================================================
+             INSTRUCTOR NAVIGATION
+        =================================================== -->
+
+        <?php elseif ($user['role'] === 'instructor'): ?>
+
+            <div class="navbar-links">
+
+                <a
+                    href="<?= e(url('app/instructor/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Dashboard
+                </a>
+
+                <a
+                    href="<?= e(url('app/instructor/videos/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Videos
+                </a>
+
+                <a
+                    href="<?= e(url('app/instructor/lessons/index.php')) ?>"
+                    class="nav-link"
+                >
+                    My Lessons
+                </a>
+
+                <a
+                    href="<?= e(url('app/assessment/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Assessments
+                </a>
+
+                <span class="nav-user">
+                    <?= e($user['full_name']) ?>
+                </span>
+
+                <form
+                    method="post"
+                    action="<?= e(url('logout.php')) ?>"
+                    class="logout-form"
+                >
+
+                    <?= csrf_field() ?>
+
+                    <button
+                        type="submit"
+                        class="nav-logout"
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        <!-- ==================================================
+             LEARNER NAVIGATION
+        =================================================== -->
+
+        <?php elseif ($user['role'] === 'learner'): ?>
+
+            <div class="navbar-links">
+
+                <a
+                    href="<?= e(url('app/learner/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Dashboard
+                </a>
+
+                <a
+                    href="<?= e(url('app/learner/lessons/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Learning
+                </a>
+
+                <!--
+                 * Learner assessment interface.
+                 *
+                 * This route will be implemented in the learner
+                 * assessment module. The link is intentionally
+                 * placed here now so the navigation structure is
+                 * ready for the assessment-taking feature.
+                 -->
+                <a
+                    href="<?= e(url('app/learner/assessments/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Assessments
                 </a>
 
                 <span class="nav-user">
@@ -214,42 +357,33 @@ $user = current_user();
  * ============================================================
  * FLASH MESSAGES
  * ============================================================
+ *
+ * consume_flash() returns all queued flash messages at once.
  */
 
-$flashSuccess = consume_flash('success');
-$flashError   = consume_flash('error');
-$flashInfo    = consume_flash('info');
+$flashMessages = consume_flash();
 ?>
 
-<?php if ($flashSuccess || $flashError || $flashInfo): ?>
+<?php if (!empty($flashMessages)): ?>
 
     <div class="container flash-container">
 
-        <?php if ($flashSuccess): ?>
+        <?php foreach ($flashMessages as $flash): ?>
 
-            <div class="alert alert-success">
-                <?= e($flashSuccess) ?>
-            </div>
+            <?php
+            $flashType = (string) ($flash['type'] ?? 'info');
+            $flashMessage = (string) ($flash['message'] ?? '');
+            ?>
 
-        <?php endif; ?>
+            <?php if ($flashMessage !== ''): ?>
 
+                <div class="alert alert-<?= e($flashType) ?>">
+                    <?= e($flashMessage) ?>
+                </div>
 
-        <?php if ($flashError): ?>
+            <?php endif; ?>
 
-            <div class="alert alert-error">
-                <?= e($flashError) ?>
-            </div>
-
-        <?php endif; ?>
-
-
-        <?php if ($flashInfo): ?>
-
-            <div class="alert alert-info">
-                <?= e($flashInfo) ?>
-            </div>
-
-        <?php endif; ?>
+        <?php endforeach; ?>
 
     </div>
 
