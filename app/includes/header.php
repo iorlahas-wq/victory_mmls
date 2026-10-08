@@ -150,6 +150,13 @@ $user = current_user();
                 </a>
 
                 <a
+                    href="<?= e(url('app/admin/videos/index.php')) ?>"
+                    class="nav-link"
+                >
+                    Videos
+                </a>
+
+                <a
                     href="<?= e(url('app/admin/skills/index.php')) ?>"
                     class="nav-link"
                 >

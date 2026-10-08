@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/app.php';
@@ -100,6 +101,24 @@ $stmt = $pdo->query(
 );
 
 $questionCount = (int) $stmt->fetchColumn();
+
+
+/*
+ * Active instructional videos
+ *
+ * Videos are stored in the existing lesson_contents table
+ * using content_type = 'video'.
+ */
+$stmt = $pdo->query(
+    "
+    SELECT COUNT(*)
+    FROM lesson_contents
+    WHERE content_type = 'video'
+      AND is_active = 1
+    "
+);
+
+$videoCount = (int) $stmt->fetchColumn();
 
 
 /*
@@ -243,6 +262,7 @@ require_once __DIR__ . '/../includes/header.php';
 
             </div>
 
+
         </section>
 
 
@@ -360,12 +380,41 @@ require_once __DIR__ . '/../includes/header.php';
                 </a>
 
 
+                <!-- VIDEOS -->
+
+                <a
+                    href="<?= e(
+                        url('app/admin/videos/index.php')
+                    ) ?>"
+                    class="admin-action-card"
+                >
+
+                    <span class="admin-action-number">
+                        04
+                    </span>
+
+                    <h3>
+                        Videos
+                    </h3>
+
+                    <p>
+                        Upload and manage the single instructional
+                        video assigned to each lesson.
+                    </p>
+
+                    <span class="admin-action-link">
+                        Manage Videos →
+                    </span>
+
+                </a>
+
+
                 <!-- ASSESSMENTS -->
 
                 <div class="admin-action-card admin-action-disabled">
 
                     <span class="admin-action-number">
-                        04
+                        05
                     </span>
 
                     <h3>
@@ -383,6 +432,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                 </div>
 
+
             </div>
 
         </section>
@@ -393,6 +443,9 @@ require_once __DIR__ . '/../includes/header.php';
         =================================================== -->
 
         <section class="admin-overview">
+
+
+            <!-- CONTENT OVERVIEW -->
 
             <div class="overview-card">
 
@@ -411,6 +464,9 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <div class="overview-list">
 
+
+                    <!-- TOTAL LESSONS -->
+
                     <div class="overview-row">
 
                         <span>
@@ -423,6 +479,8 @@ require_once __DIR__ . '/../includes/header.php';
 
                     </div>
 
+
+                    <!-- PUBLISHED LESSONS -->
 
                     <div class="overview-row">
 
@@ -437,6 +495,8 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
 
 
+                    <!-- ACTIVE SKILLS -->
+
                     <div class="overview-row">
 
                         <span>
@@ -450,6 +510,23 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
 
 
+                    <!-- ACTIVE VIDEOS -->
+
+                    <div class="overview-row">
+
+                        <span>
+                            Active instructional videos
+                        </span>
+
+                        <strong>
+                            <?= $videoCount ?>
+                        </strong>
+
+                    </div>
+
+
+                    <!-- ASSESSMENT QUESTIONS -->
+
                     <div class="overview-row">
 
                         <span>
@@ -462,10 +539,13 @@ require_once __DIR__ . '/../includes/header.php';
 
                     </div>
 
+
                 </div>
 
             </div>
 
+
+            <!-- QUICK NOTE -->
 
             <div class="overview-card overview-message">
 
@@ -494,7 +574,9 @@ require_once __DIR__ . '/../includes/header.php';
 
             </div>
 
+
         </section>
+
 
     </div>
 
